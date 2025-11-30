@@ -1,8 +1,7 @@
-// api/winrate.js – Serverless proxy (token hidden in env vars)
 export default async function handler(req, res) {
   try {
-    const NOTION_TOKEN = process.env.NOTION_TOKEN; // Hidden!
-    const DATABASE_ID = process.env.DATABASE_ID;   // Hidden too
+    const NOTION_TOKEN = process.env.NOTION_TOKEN;
+    const DATABASE_ID = process.env.DATABASE_ID;
     const PROPERTY_NAME = process.env.PROPERTY_NAME || "Win Rate";
 
     if (!NOTION_TOKEN || !DATABASE_ID) {
@@ -30,10 +29,10 @@ export default async function handler(req, res) {
 
     const page = data.results[0];
     const value = page.properties[PROPERTY_NAME]?.formula?.number
-               ?? page.properties[PROPERTY_NAME]?.number
-               ?? page.properties[PROPERTY_NAME]?.rollup?.number
-               ?? page.properties[PROPERTY_NAME]?.percentage
-               ?? 0;
+              ?? page.properties[PROPERTY_NAME]?.number
+              ?? page.properties[PROPERTY_NAME]?.rollup?.number
+              ?? page.properties[PROPERTY_NAME]?.percentage
+              ?? 0;
     const percent = Math.round(value * 100);
 
     res.status(200).json({ winrate: percent });
