@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Win Rate KPI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { margin: 0; padding: 20px; }
+    .card:hover { transform: translateY(-6px); }
+  </style>
+</head>
+<body class="bg-transparent">
+  <div class="max-w-sm mx-auto">
+    <div class="card transition-all duration-300 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl shadow-2xl p-8 text-white text-center">
+      <h2 class="text-lg font-light opacity-90 mb-2">Win Rate</h2>
+      <div class="text-6xl font-bold" id="winrate">—</div>
+      <p class="text-sm opacity-75 mt-3">Live from Notion</p>
+    </div>
+  </div>
+
+  <script>
+    // ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
+    // ONLY CHANGE THIS ONE LINE:
+    const PROXY_URL = "https://raw.githubusercontent.com/SpoezChris/KPI/main/proxy.js";
+    // ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
+
+    async function loadWinRate() {
+      try {
+        // Load the proxy script (it returns JSON directly)
+        const res = await fetch(PROXY_URL + "?t=" + Date.now()); // cache-buster
+        const { winrate } = await res.json();
+        document.getElementById("winrate").textContent = (winrate ?? "—") + "%";
+      } catch (e) {
+        document.getElementById("winrate").textContent = "—";
+      }
+    }
+
+    loadWinRate();
+    setInterval(loadWinRate, 60000);
+  </script>
+</body>
+</html>
