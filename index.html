@@ -1,30 +1,49 @@
-<script>
-  // CHANGE THIS ONE LINE AFTER STEP 4: Your Vercel proxy URL
-  const PROXY_URL = "https://kpi-pub.vercel.app";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Win Rate KPI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { margin: 0; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: transparent; }
+    .card:hover { transform: translateY(-6px); transition: all 0.3s ease; }
+  </style>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-transparent">
+  <div class="max-w-sm mx-auto">
+    <div class="card bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl shadow-2xl p-8 text-white text-center">
+      <h2 class="text-lg font-light opacity-90 mb-2">Win Rate</h2>
+      <div class="text-6xl font-bold mb-2" id="winrate">—</div>
+      <p class="text-sm opacity-75">Live from Notion</p>
+    </div>
+  </div>
 
-  window.handleNotionResponse = function(data) {
-    const winrateEl = document.getElementById("winrate");
-    if (data.winrate !== null && data.winrate !== undefined) {
-      winrateEl.textContent = data.winrate + "%";
-    } else {
-      winrateEl.textContent = "—";
+  <script>
+    // UPDATE THIS LINE AFTER STEP 2: Your Vercel proxy URL
+    const PROXY_URL = "https://kpi-pub.vercel.app";
+
+    async function loadWinRate() {
+      const winrateEl = document.getElementById("winrate");
+      winrateEl.textContent = "…"; // Loading spinner
+
+      try {
+        const res = await fetch(PROXY_URL + "?cache=" + Date.now());
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (data.winrate !== null && data.winrate !== undefined) {
+          winrateEl.textContent = data.winrate + "%";
+        } else {
+          winrateEl.textContent = "—";
+        }
+      } catch (e) {
+        winrateEl.textContent = "—";
+        console.error("Fetch error:", e); // Check console for details
+      }
     }
-  };
 
-  async function loadWinRate() {
-    const winrateEl = document.getElementById("winrate");
-    winrateEl.textContent = "…"; // Loading
-
-    try {
-      const res = await fetch(PROXY_URL + "?cache=" + Date.now());
-      const data = await res.json();
-      window.handleNotionResponse(data); // Use the handler for consistency
-    } catch (e) {
-      winrateEl.textContent = "—";
-      console.error("Load error:", e);
-    }
-  }
-
-  loadWinRate();
-  setInterval(loadWinRate, 60000); // Every minute
-</script>
+    // Load immediately and refresh every 60s
+    loadWinRate();
+    setInterval(loadWinRate, 60000);
+  </script>
+</body>
+</html>
